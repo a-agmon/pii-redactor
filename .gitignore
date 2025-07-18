@@ -1,0 +1,106 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+.eggs/
+*.egg
+
+# Virtual environments
+bin/
+lib/
+lib64/
+include/
+pyvenv.cfg
+share/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Model files and data
+models/checkpoints/*/checkpoint-*/
+models/checkpoints/pii-redaction-model/*.safetensors
+models/checkpoints/pii-redaction-model/*.pt
+models/checkpoints/pii-redaction-model/*.pth
+models/checkpoints/pii-redaction-model/*.bin
+models/checkpoints/pii-redaction-model/optimizer.pt
+models/onnx/
+data/raw/
+data/processed/
+data/synthetic/
+
+# Large model files (anywhere in the project)
+*.safetensors
+*.onnx
+*.pt
+*.pth
+*.bin
+model_*.onnx
+pytorch_model.bin
+tf_model.h5
+
+# Logs and results
+logs/
+runs/
+wandb/
+*.log
+performance_*.json
+performance_results_*.json
+
+# Cache
+.cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment variables
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+
+# Secrets and credentials
+secrets.json
+credentials.json
+*.key
+*.pem

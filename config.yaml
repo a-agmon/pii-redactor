@@ -1,0 +1,62 @@
+# PII Redaction Model Configuration
+# This configuration file controls all aspects of the model training pipeline
+
+model:
+  # Base model - multilingual MiniLM model that supports Hebrew
+  base_model: "distilbert-base-multilingual-cased"
+  max_length: 128
+  label_all_tokens: false  # Only label first subword of each token
+
+training:
+  # Training hyperparameters
+  batch_size: 16
+  learning_rate: 5e-5
+  num_epochs: 10
+  warmup_steps: 500
+  weight_decay: 0.01
+  gradient_accumulation_steps: 2
+  evaluation_strategy: "epoch"
+  save_strategy: "epoch"
+  save_total_limit: 3  # Keep only last 3 checkpoints
+  logging_steps: 50
+  seed: 42
+  
+dataset:
+  # Dataset configuration
+  train_size: 10000
+  val_size: 2000
+  test_size: 1000
+  languages: ["en", "he", "es", "fr", "de"]
+  hebrew_ratio: 0.4  # 40% of dataset will be Hebrew
+  max_tokens_per_sample: 128
+  
+# PII types to detect and redact
+pii_types:
+  - NAME
+  - ID_NUMBER
+  - PHONE
+  - EMAIL
+  - ADDRESS
+  - CREDIT_CARD
+  - DATE_OF_BIRTH
+  - PASSPORT
+  - BANK_ACCOUNT
+  - LICENSE_PLATE
+
+# Label mapping for token classification
+label_map:
+  O: 0        # Outside any PII entity
+  B-PII: 1    # Beginning of PII entity
+  I-PII: 2    # Inside PII entity
+
+output:
+  # Output paths
+  model_path: "models/checkpoints/pii-redaction-model"
+  onnx_path: "models/onnx/pii-redaction-model"
+  logs_dir: "logs"
+  
+# ONNX optimization settings
+onnx:
+  optimize: true
+  quantize: false  # Set to true for int8 quantization
+  opset_version: 14

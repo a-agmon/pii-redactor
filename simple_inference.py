@@ -69,15 +69,21 @@ class SimplePIIRedactor:
         Returns:
             Text with PII redacted
         """
-        # Tokenize
+        # Tokenize with offset mapping to preserve character positions
         inputs = self.tokenizer(
             text,
             padding="max_length",
             truncation=True,
             max_length=self.max_length,
             return_tensors="np",
-            return_token_type_ids=True
+            return_token_type_ids=True,
+            return_offsets_mapping=True
         )
+        
+        # Get offset mapping for token-to-character alignment
+        offset_mapping = inputs.pop("return_offsets_mapping", None)
+        if offset_mapping is None:
+            offset_mapping = inputs.pop("offset_mapping", None)
         
         # Prepare inputs for ONNX
         onnx_inputs = {
@@ -93,43 +99,49 @@ class SimplePIIRedactor:
         # Get predictions
         predictions = np.argmax(outputs[0], axis=-1)[0]
         
-        # Convert tokens back to text with redaction
-        tokens = self.tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+        # Find PII entities using offset mapping
+        entities = []
+        current_entity_start = None
+        current_entity_end = None
         
-        # Group tokens and apply redaction
-        redacted_tokens = []
-        in_pii = False
-        
-        for i, (token, pred) in enumerate(zip(tokens, predictions)):
+        for i, (pred, (start, end)) in enumerate(zip(predictions, offset_mapping[0])):
             if inputs["attention_mask"][0][i] == 0:  # Padding token
                 break
                 
-            label = self.id_to_label[pred]
-            
-            # Skip special tokens
-            if token in ["<s>", "</s>", "[CLS]", "[SEP]", "[PAD]", "<pad>"]:
+            # Skip special tokens (offset mapping is (0, 0) for special tokens)
+            if start == 0 and end == 0:
                 continue
                 
+            label = self.id_to_label[pred]
+            
             if label == "B-PII":  # Beginning of PII
-                if not in_pii:
-                    redacted_tokens.append(f" {redaction_token} ")
-                    in_pii = True
+                # Save previous entity if exists
+                if current_entity_start is not None:
+                    entities.append((current_entity_start, current_entity_end))
+                # Start new entity
+                current_entity_start = start
+                current_entity_end = end
             elif label == "I-PII":  # Inside PII
-                continue  # Skip this token
+                # Extend current entity
+                if current_entity_start is not None:
+                    current_entity_end = end
             else:  # Not PII
-                if in_pii:
-                    in_pii = False
-                redacted_tokens.append(token)
+                # End current entity
+                if current_entity_start is not None:
+                    entities.append((current_entity_start, current_entity_end))
+                    current_entity_start = None
+                    current_entity_end = None
         
-        # Convert back to text
-        redacted_text = self.tokenizer.convert_tokens_to_string(redacted_tokens)
+        # Add final entity if exists
+        if current_entity_start is not None:
+            entities.append((current_entity_start, current_entity_end))
         
-        # Clean up text formatting
-        redacted_text = redacted_text.replace(" ##", "")  # Fix subword tokens
-        redacted_text = redacted_text.replace("##", "")
-        redacted_text = redacted_text.replace("  ", " ")  # Remove double spaces
+        # Apply redaction by replacing character ranges (reverse order to avoid offset issues)
+        redacted_text = text
+        for start, end in reversed(entities):
+            redacted_text = redacted_text[:start] + redaction_token + redacted_text[end:]
         
-        return redacted_text.strip()
+        return redacted_text
 
 
 def simple_pii_redact(text: str, model_path: str = "models/onnx/pii-redaction-model") -> str:

@@ -8,7 +8,7 @@ model:
   label_all_tokens: false  # Only label first subword of each token
 
 training:
-  # Training hyperparameters
+  # Training hyperparameters 
   batch_size: 16
   learning_rate: 5e-5
   num_epochs: 10

@@ -1,0 +1,74 @@
+2. Smaller Model Recommendations
+
+  Here are smaller multilingual models you can try:
+
+  Tiny Models (<100MB)
+
+  1. microsoft/xtremedistil-l6-h256-uncased (22M params, ~85MB)
+    - 6 layers, 256 hidden dimensions
+    - 6x smaller than DistilBERT
+    - Supports 100+ languages
+  2. google/electra-small-discriminator (14M params, ~55MB)
+    - Very efficient architecture
+    - Good for token classification
+    - Multilingual version available
+  3. albert-base-v2 (12M params, ~48MB)
+    - Parameter sharing makes it tiny
+    - Good performance despite size
+    - Has multilingual variants
+
+  Small Models (100-300MB)
+
+  4. microsoft/mdeberta-v3-base (86M params, ~340MB)
+    - Better than DistilBERT for many tasks
+    - Excellent multilingual support
+    - More efficient architecture
+  5. xlm-roberta-base pruned versions
+    - Various pruned versions available (30-50% smaller)
+    - Maintains good multilingual performance
+
+  3. Are Smaller Models Faster?
+
+  Generally YES, but with caveats:
+
+  Speed Benefits:
+
+  - Faster inference: Less computation needed
+  - Lower memory bandwidth: Less data to move
+  - Better CPU performance: Fit in cache better
+  - Faster loading: Smaller files to read
+
+  Performance Trade-offs:
+
+  | Model Size         | Speed                       | Accuracy          | Best For                          |
+  |--------------------|-----------------------------|-------------------|-----------------------------------|
+  | Tiny (<100MB)      | Very Fast (200+ texts/sec)  | Lower (85-90% F1) | High-volume, tolerance for errors |
+  | Small (100-300MB)  | Fast (100-150 texts/sec)    | Good (90-95% F1)  | Balanced performance              |
+  | Medium (300-500MB) | Moderate (50-100 texts/sec) | High (95%+ F1)    | Quality-critical                  |
+
+⏺ Update Todos
+  ⎿  ☒ Locate PyTorch model files           
+     ☒ Research smaller multilingual models
+     ☒ Analyze model size vs speed tradeoffs
+
+⏺ Recommendation for Your Use Case
+
+  For PII redaction with Hebrew support, I'd suggest trying:
+
+  1. microsoft/xtremedistil-l6-h256-uncased
+    - 6x smaller than current model
+    - Should give 3-5x speed improvement
+    - May need more training epochs due to smaller capacity
+
+  To switch models:
+  # config.yaml
+  model:
+    base_model: "microsoft/xtremedistil-l6-h256-uncased"
+    max_length: 128
+    label_all_tokens: false
+
+  Then:
+  python cleanup.py --all
+  python main.py
+
+  The smaller model will likely need more training data or epochs to reach similar accuracy, but will be much faster for inference.

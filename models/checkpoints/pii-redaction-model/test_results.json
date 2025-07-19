@@ -2,14 +2,14 @@
     "epoch": 6.0,
     "test_accuracy": 1.0,
     "test_f1": 1.0,
-    "test_loss": 0.0001113752878154628,
+    "test_loss": 2.5674409698694944e-05,
     "test_pii_f1": 1.0,
     "test_pii_precision": 1.0,
     "test_pii_recall": 1.0,
-    "test_pii_support": 2347,
+    "test_pii_support": 861,
     "test_precision": 1.0,
     "test_recall": 1.0,
-    "test_runtime": 2.1642,
-    "test_samples_per_second": 462.063,
-    "test_steps_per_second": 29.11
+    "test_runtime": 2.1075,
+    "test_samples_per_second": 474.498,
+    "test_steps_per_second": 29.893
 }

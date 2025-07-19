@@ -82,8 +82,18 @@ class PIIRedactor:
         self.confidence_threshold = confidence_threshold
         
         # Load tokenizer
-        logger.info(f"Loading tokenizer from {model_path}")
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        if use_onnx:
+            # For ONNX, the model_path might be the ONNX file or directory
+            # We need to find the tokenizer in the same directory
+            if os.path.isfile(model_path):
+                tokenizer_path = os.path.dirname(model_path)
+            else:
+                tokenizer_path = model_path
+            logger.info(f"Loading tokenizer from {tokenizer_path}")
+            self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+        else:
+            logger.info(f"Loading tokenizer from {model_path}")
+            self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         
         # Load model
         if use_onnx:

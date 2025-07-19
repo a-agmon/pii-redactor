@@ -174,12 +174,13 @@ class HebrewPIIGenerator:
     
     def get_templates(self) -> List[Dict]:
         """
-        Get Hebrew sentence templates with PII placeholders.
+        Get Hebrew sentence templates with PII placeholders and clean sentences.
         
         Returns:
             List of template dictionaries with template string and entity types
         """
-        templates = [
+        # PII-containing templates (original)
+        pii_templates = [
             {
                 "template": "שמי {NAME} ומספר תעודת הזהות שלי הוא {ID_NUMBER}",
                 "entities": ["NAME", "ID_NUMBER"]
@@ -230,7 +231,77 @@ class HebrewPIIGenerator:
             }
         ]
         
-        return templates
+        # Clean templates (no PII) with technical terms and common words
+        clean_templates = [
+            {
+                "template": "אני אוהב לתכנת בפייתון והספרייה המועדפת עלי היא NumPy",
+                "entities": []
+            },
+            {
+                "template": "היום למדתי על למידת מכונה ובינה מלאכותית",
+                "entities": []
+            },
+            {
+                "template": "האתר שלי נמצא בכתובת ובו אפשר למצוא מידע על פרויקטים",
+                "entities": []
+            },
+            {
+                "template": "אני עובד עם מסד נתונים גדול ומשתמש בכלים שונים לניתוח",
+                "entities": []
+            },
+            {
+                "template": "הטכנולוגיה שאני הכי אוהב היא React ו-JavaScript",
+                "entities": []
+            },
+            {
+                "template": "המחשב שלי רץ על מערכת הפעלה לינוקס ואני משתמש בטרמינל",
+                "entities": []
+            },
+            {
+                "template": "השפה המועדפת עלי לפיתוח היא Python וGo",
+                "entities": []
+            },
+            {
+                "template": "אני עובד בחברת טכנולוגיה ומפתח אפליקציות ווב",
+                "entities": []
+            },
+            {
+                "template": "הפרויקט שלי כולל שרת Node.js ומסד נתונים MongoDB",
+                "entities": []
+            },
+            {
+                "template": "אני אוהב לקרוא ספרים על אלגוריתמים ומבני נתונים",
+                "entities": []
+            }
+        ]
+        
+        # Mixed templates (PII + regular content)
+        mixed_templates = [
+            {
+                "template": "שלום, אני {NAME} ואני עובד כמתכנת Python ב-Google. אפשר ליצור קשר במייל {EMAIL}",
+                "entities": ["NAME", "EMAIL"]
+            },
+            {
+                "template": "המפתח {NAME} יצר ספרייה נהדרת בשם TensorFlow, ניתן ליצור קשר בטלפון {PHONE}",
+                "entities": ["NAME", "PHONE"]
+            },
+            {
+                "template": "אני {NAME} ואני אוהב לעבוד עם Docker ו-Kubernetes בפרויקטים שלי",
+                "entities": ["NAME"]
+            },
+            {
+                "template": "המהנדס {NAME} פיתח API מעולה ב-Flask, הכתובת שלו היא {ADDRESS}",
+                "entities": ["NAME", "ADDRESS"]
+            },
+            {
+                "template": "אני משתמש ב-Git ו-GitHub לניהול הקוד, השם שלי {NAME} ואימייל {EMAIL}",
+                "entities": ["NAME", "EMAIL"]
+            }
+        ]
+        
+        # Combine all templates with appropriate weights
+        all_templates = pii_templates + clean_templates * 2 + mixed_templates
+        return all_templates
     
     def generate_value(self, entity_type: str, context: Optional[Dict] = None) -> str:
         """
@@ -305,7 +376,8 @@ class MultilingualPIIDataset:
             List of template dictionaries
         """
         if language == 'en':
-            return [
+            # PII-containing templates
+            pii_templates = [
                 {
                     "template": "My name is {NAME} and my ID number is {ID_NUMBER}",
                     "entities": ["NAME", "ID_NUMBER"]
@@ -327,8 +399,78 @@ class MultilingualPIIDataset:
                     "entities": ["NAME", "EMAIL", "PHONE"]
                 }
             ]
+            
+            # Clean templates (no PII)
+            clean_templates = [
+                {
+                    "template": "I love programming in Python and my favorite library is NumPy",
+                    "entities": []
+                },
+                {
+                    "template": "Today I learned about machine learning and artificial intelligence",
+                    "entities": []
+                },
+                {
+                    "template": "You can visit my website to find information about my projects",
+                    "entities": []
+                },
+                {
+                    "template": "I work with large databases and use various tools for analysis",
+                    "entities": []
+                },
+                {
+                    "template": "My favorite technology stack is React and JavaScript",
+                    "entities": []
+                },
+                {
+                    "template": "My computer runs on Linux and I use the terminal regularly",
+                    "entities": []
+                },
+                {
+                    "template": "My preferred programming language is Python and Go",
+                    "entities": []
+                },
+                {
+                    "template": "I work at a tech company developing web applications",
+                    "entities": []
+                },
+                {
+                    "template": "My project includes a Node.js server and MongoDB database",
+                    "entities": []
+                },
+                {
+                    "template": "I enjoy reading books about algorithms and data structures",
+                    "entities": []
+                }
+            ]
+            
+            # Mixed templates (PII + regular content)
+            mixed_templates = [
+                {
+                    "template": "Hello, I'm {NAME} and I work as a Python developer at Google. You can reach me at {EMAIL}",
+                    "entities": ["NAME", "EMAIL"]
+                },
+                {
+                    "template": "The developer {NAME} created an amazing library called TensorFlow, contact at {PHONE}",
+                    "entities": ["NAME", "PHONE"]
+                },
+                {
+                    "template": "I'm {NAME} and I love working with Docker and Kubernetes in my projects",
+                    "entities": ["NAME"]
+                },
+                {
+                    "template": "Engineer {NAME} developed an excellent API in Flask, address is {ADDRESS}",
+                    "entities": ["NAME", "ADDRESS"]
+                },
+                {
+                    "template": "I use Git and GitHub for code management, my name is {NAME} and email {EMAIL}",
+                    "entities": ["NAME", "EMAIL"]
+                }
+            ]
+            
+            return pii_templates + clean_templates * 2 + mixed_templates
         elif language == 'es':
-            return [
+            pii_templates = [
                 {
                     "template": "Mi nombre es {NAME} y mi número de ID es {ID_NUMBER}",
                     "entities": ["NAME", "ID_NUMBER"]
@@ -342,8 +484,23 @@ class MultilingualPIIDataset:
                     "entities": ["NAME", "ADDRESS"]
                 }
             ]
+            clean_templates = [
+                {
+                    "template": "Me encanta programar en Python y mi biblioteca favorita es NumPy",
+                    "entities": []
+                },
+                {
+                    "template": "Trabajo con bases de datos grandes y uso varias herramientas para análisis",
+                    "entities": []
+                },
+                {
+                    "template": "Mi tecnología favorita es React y JavaScript",
+                    "entities": []
+                }
+            ]
+            return pii_templates + clean_templates * 2
         elif language == 'fr':
-            return [
+            pii_templates = [
                 {
                     "template": "Je m'appelle {NAME} et mon numéro d'identification est {ID_NUMBER}",
                     "entities": ["NAME", "ID_NUMBER"]
@@ -357,8 +514,23 @@ class MultilingualPIIDataset:
                     "entities": ["NAME", "ADDRESS"]
                 }
             ]
+            clean_templates = [
+                {
+                    "template": "J'adore programmer en Python et ma bibliothèque préférée est NumPy",
+                    "entities": []
+                },
+                {
+                    "template": "Je travaille avec de grandes bases de données et j'utilise divers outils d'analyse",
+                    "entities": []
+                },
+                {
+                    "template": "Ma technologie préférée est React et JavaScript",
+                    "entities": []
+                }
+            ]
+            return pii_templates + clean_templates * 2
         elif language == 'de':
-            return [
+            pii_templates = [
                 {
                     "template": "Mein Name ist {NAME} und meine ID-Nummer ist {ID_NUMBER}",
                     "entities": ["NAME", "ID_NUMBER"]
@@ -372,6 +544,21 @@ class MultilingualPIIDataset:
                     "entities": ["NAME", "ADDRESS"]
                 }
             ]
+            clean_templates = [
+                {
+                    "template": "Ich programmiere gerne in Python und meine Lieblingsbibliothek ist NumPy",
+                    "entities": []
+                },
+                {
+                    "template": "Ich arbeite mit großen Datenbanken und verwende verschiedene Analysetools",
+                    "entities": []
+                },
+                {
+                    "template": "Meine bevorzugte Technologie ist React und JavaScript",
+                    "entities": []
+                }
+            ]
+            return pii_templates + clean_templates * 2
         else:
             return []
     

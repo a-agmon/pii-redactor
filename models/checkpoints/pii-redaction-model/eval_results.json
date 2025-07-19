@@ -2,14 +2,14 @@
     "epoch": 6.0,
     "eval_accuracy": 1.0,
     "eval_f1": 1.0,
-    "eval_loss": 0.00012649840209633112,
+    "eval_loss": 2.6352063287049532e-05,
     "eval_pii_f1": 1.0,
     "eval_pii_precision": 1.0,
     "eval_pii_recall": 1.0,
-    "eval_pii_support": 4667,
+    "eval_pii_support": 1748,
     "eval_precision": 1.0,
     "eval_recall": 1.0,
-    "eval_runtime": 3.6419,
-    "eval_samples_per_second": 549.169,
-    "eval_steps_per_second": 34.323
+    "eval_runtime": 3.4297,
+    "eval_samples_per_second": 583.138,
+    "eval_steps_per_second": 36.446
 }

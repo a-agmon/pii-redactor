@@ -2,29 +2,8 @@
 
 A comprehensive machine learning pipeline for training multilingual PII (Personally Identifiable Information) redaction models with special focus on Hebrew language support.
 
-## 🌟 Features
 
-- **Multilingual Support**: English, Hebrew, Spanish, French, and German
-- **Hebrew-Specific**: Specialized Hebrew PII patterns and RTL text handling
-- **Synthetic Data Generation**: Automated creation of training data with realistic PII patterns
-- **BERT-based Architecture**: Fine-tuned multilingual MiniLM model for token classification
-- **ONNX Optimization**: Model conversion for efficient production deployment
-- **Comprehensive Testing**: Extensive test suite with benchmarking capabilities
-
-## 📋 Supported PII Types
-
-- **Names**: Personal names in multiple languages
-- **ID Numbers**: Israeli ID, SSN, and other national identifiers
-- **Phone Numbers**: Various international phone formats
-- **Email Addresses**: All standard email formats
-- **Physical Addresses**: Street addresses in different languages
-- **Credit Cards**: Credit card numbers (including masked formats)
-- **Dates of Birth**: Multiple date formats including Hebrew dates
-- **Passport Numbers**: International passport formats
-- **Bank Accounts**: Account numbers and IBANs
-- **License Plates**: Vehicle registration numbers
-
-## 🏗️ Project Structure
+##  Project Structure
 
 ```
 pii-redactor/
@@ -47,7 +26,7 @@ pii-redactor/
 └── test_inference.py       # Inference testing
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Installation
 
@@ -136,7 +115,7 @@ redacted_hebrew = redactor.redact(hebrew_text)
 print(redacted_hebrew)  # "שמי [NAME_REDACTED] ומספר תעודת הזהות שלי הוא [ID_REDACTED]"
 ```
 
-## 📊 Dataset Creation
+##  Dataset Creation
 
 The pipeline generates synthetic multilingual PII data:
 
@@ -156,7 +135,7 @@ The pipeline generates synthetic multilingual PII data:
 - Handles subword tokenization alignment
 - Supports complex multi-token entities
 
-## 🎯 Model Architecture & Training
+##  Model Architecture & Training
 
 ### How Token Classification Works
 
@@ -218,7 +197,7 @@ Input Text → Tokenizer → Base Model (DistilBERT) → Classification Head →
 - Cross-platform compatibility
 - Mobile deployment ready
 
-## 🔧 Advanced Usage
+##  Advanced Usage
 
 ### Batch Processing
 
@@ -258,7 +237,7 @@ for entity in entities:
           f"(confidence: {entity.confidence:.3f})")
 ```
 
-## 📈 Performance Benchmarks
+##  Performance Benchmarks
 
 ### Inference Speed
 - **PyTorch**: ~50-100 texts/second
@@ -299,7 +278,7 @@ python test_inference.py --interactive
 - **Performance**: Throughput and latency benchmarks
 - **Batch Processing**: Efficiency with multiple texts
 
-## 📝 Configuration Reference
+##  Configuration Reference
 
 ### Model Configuration
 ```yaml
@@ -371,7 +350,7 @@ dataset:
    redactor = PIIRedactor(model_path, use_onnx=False, device='cuda')
    ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -379,18 +358,18 @@ dataset:
 4. Ensure code follows style guidelines
 5. Submit a pull request
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - Hugging Face Transformers for the model architecture
 - Sentence Transformers for the multilingual base model
 - ONNX Runtime for optimization capabilities
 - Faker library for synthetic data generation
 
-## 📞 Support
+##  Support
 
 For questions and support:
 - Create an issue in the GitHub repository

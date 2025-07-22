@@ -136,12 +136,48 @@ class SimplePIIRedactor:
         if current_entity_start is not None:
             entities.append((current_entity_start, current_entity_end))
         
+        # Adjust entity boundaries to preserve punctuation
+        entities = self._adjust_entity_boundaries(text, entities)
+        
         # Apply redaction by replacing character ranges (reverse order to avoid offset issues)
         redacted_text = text
         for start, end in reversed(entities):
             redacted_text = redacted_text[:start] + redaction_token + redacted_text[end:]
         
         return redacted_text
+    
+    def _adjust_entity_boundaries(self, text: str, entities: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
+        """Adjust entity boundaries to exclude leading/trailing punctuation."""
+        adjusted_entities = []
+        
+        for start, end in entities:
+            # For phone numbers, we want to preserve the format but redact the digits
+            # Check if this looks like a phone number pattern
+            entity_text = text[start:end]
+            
+            # If it contains digits and common phone punctuation, handle specially
+            if any(c.isdigit() for c in entity_text):
+                # For phone numbers, only trim outer punctuation that's not part of the number
+                # Trim leading non-digit, non-phone punctuation
+                while start < end and text[start] in '—[]{}"\':;.,!?/\\|@#$%^&*+=~`':
+                    start += 1
+                
+                # Trim trailing non-digit, non-phone punctuation  
+                while end > start and text[end-1] in '—[]{}"\':;.,!?/\\|@#$%^&*+=~`':
+                    end -= 1
+            else:
+                # For non-phone PII, trim all punctuation
+                while start < end and text[start] in '—-()[]{}"\':;.,!?/\\|@#$%^&*+=~`':
+                    start += 1
+                
+                while end > start and text[end-1] in '—-()[]{}"\':;.,!?/\\|@#$%^&*+=~`':
+                    end -= 1
+            
+            # Only add the entity if there's content left
+            if start < end:
+                adjusted_entities.append((start, end))
+        
+        return adjusted_entities
 
 
 def simple_pii_redact(text: str, model_path: str = "models/onnx/pii-redaction-model") -> str:
